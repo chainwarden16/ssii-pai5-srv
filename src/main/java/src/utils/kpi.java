@@ -2,6 +2,11 @@ package src.utils;
 
 import org.joda.time.DateTime;
 import org.joda.time.Months;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 
 public class kpi {
@@ -17,7 +22,6 @@ public class kpi {
     public static void addOne(boolean pos){
         //Comprobamos diferencia de fechas
         DateTime now=DateTime.now();
-        lastUpDate.compareTo(now);
         Months diference=Months.monthsBetween(lastUpDate,now);
 
         if(diference.getMonths()!=0){
@@ -47,23 +51,43 @@ public class kpi {
     }
 
 
-    public static Integer getValue(double porcentaje){
+    private static Integer getValue(double porcentaje){
         Integer res = null;
 
         if(list.getLast()>porcentaje||list.getFirst()>porcentaje){
             res= -1;
+            writeFile("-");
+
         }else if(list.getLast()<porcentaje||list.getFirst()<porcentaje){
             res=1;
+            writeFile("+");
+
         }else {
             res= 0;
+            writeFile("0");
         }
-        writeFile();
         return res;
     }
-    private static void writeFile(){
+    private static void writeFile(String value){
+        try{
+            String text;
+            DateTime now=DateTime.now();
+            text=String.valueOf(now.getYear());
+            text=text.concat(",");
+            text=text.concat(String.valueOf(now.getMonthOfYear()));
+            text=text.concat(",");
+            text=text.concat(value);
+            text=text.concat("\n");
+            File file = new File("kpi.txt");
 
+            FileWriter writer= new FileWriter(file,true);
+            writer.write(text);
+            writer.flush();
+            writer.close();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
     }
-
 //========================================================================
 //========================================================================
 //========================================================================
@@ -85,10 +109,16 @@ public class kpi {
 
         if(list.getLast()>porcentaje||list.getFirst()>porcentaje){
             res= -1;
+            writeFile("-");
+
         }else if(list.getLast()<porcentaje||list.getFirst()<porcentaje){
             res=1;
+            writeFile("+");
+
         }else {
             res= 0;
+            writeFile("0");
+
         }
         return res;
     }
